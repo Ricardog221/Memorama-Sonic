@@ -8,7 +8,9 @@ const backgroundMusic = document.getElementById("backgroundMusic");
 const nextLevelButton = document.getElementById("nextLevelButton");
 const restartButton = document.getElementById("restartButton");
 const exitButton = document.getElementById("exitButton");
+const levelDisplay = document.getElementById("levelDisplay");
 
+// Inicializar variables
 let startTime = Date.now();
 let timeElapsed = 0;
 let cards = [];
@@ -17,10 +19,11 @@ let matchedCards = [];
 let matchedPairs = 0;
 const totalPairs = 15; 
 let level = 1;
-let maxTime = 180000; // 3 minutos para nivel 2
+let maxTime = 180000; // 3 minutos 
 let moves = 0; // Movimientos realizados en el nivel 3
-let maxMoves = 50; // Límite de movimientos en el nivel 3
+let maxMoves = 70; // Límite de movimientos en el nivel 3
 let gameLost = false;
+let flipDelay = 1000; // Tiempo de volteo de las cartas
 
 // música de fondo(aun no definida)
 backgroundMusic.play();
@@ -32,8 +35,6 @@ const cardColors = [
     '#33A6FF', '#FFA633', '#FF338F'
 ];
 
-const cardPairs = [...cardColors, ...cardColors]; 
-
 // Barajar las cartas
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -42,7 +43,7 @@ function shuffle(array) {
     }
     return array;
 }
-cards = shuffle(cardPairs);
+let cardPairs = shuffle([...cardColors, ...cardColors]);
 
 function drawCards() {
     const cols = 6;
@@ -55,7 +56,7 @@ function drawCards() {
         const y = Math.floor(i / cols) * cardHeight;
 
         if (flippedCards.includes(i) || matchedCards.includes(i)) {
-            // Si la carta está volteada o emparejada, muestra el color
+             // Si la carta está volteada o emparejada, muestra el color
             ctx.fillStyle = cards[i];
         } else {
             // Muestra la parte trasera de la carta
@@ -80,30 +81,34 @@ function checkMatch() {
                 setTimeout(() => {
                     if (level === 2) {
                         alert("¡Ganaste el Nivel 2! Avanzas al Nivel 3.");
-                        level = 3; // Cambiar el nivel
-                        moves = 0; // Reiniciar movimientos
-                        movesDisplay.style.display = "block"; // Mostrar movimientos
-                        nextLevelButton.style.display = "none"; // Ocultar botón de siguiente nivel
-                        startTime = Date.now(); // Reiniciar tiempo
+                        level = 3;
+                        moves = 0;
+                        matchedPairs = 0;
+                        matchedCards = [];
+                        cardPairs = shuffle([...cardColors, ...cardColors]);
+                        nextLevelButton.style.display = "none";
+                        movesDisplay.textContent = "Movimientos: 0";
+                        movesDisplay.style.display = "block";
+                        startTime = Date.now();  // Reiniciar tiempo
                         drawCards();
                     } else if (level === 3) {
                         alert("¡Ganaste el Nivel 3! Has completado el juego.");
                     } else {
                         alert("¡Ganaste!");
-                        nextLevelButton.style.display = "block"; // siguiente nivel
+                        nextLevelButton.style.display = "block";
                     }
+                    updateLevelDisplay(); 
                 }, 500);
             }
         } else {
             setTimeout(() => {
                 flippedCards = [];
                 drawCards();
-            }, 1000);
+            }, flipDelay);
         }
     }
 }
 
-// Manejador de clics
 canvas.addEventListener("click", (e) => {
     if (gameLost) return; 
 
@@ -119,7 +124,7 @@ canvas.addEventListener("click", (e) => {
     const cardY = Math.floor(y / cardHeight);
     const cardIndex = cardY * cols + cardX;
 
-    // Voltea la carta si no está ya emparejada o volteada
+     // Voltea la carta si no está ya emparejada o volteada
     if (!flippedCards.includes(cardIndex) && !matchedCards.includes(cardIndex) && flippedCards.length < 2) {
         clickSound.play();
         flippedCards.push(cardIndex);
@@ -132,8 +137,8 @@ canvas.addEventListener("click", (e) => {
             if (moves >= maxMoves) {
                 alert("¡Has alcanzado el límite de movimientos! Has perdido.");
                 gameLost = true;
-                restartButton.style.display = "block"; // reiniciar
-                exitButton.style.display = "block";    // salir
+                restartButton.style.display = "block";
+                exitButton.style.display = "block";
             }
         }
     }
@@ -144,12 +149,12 @@ function updateTimer() {
     timeElapsed = Math.floor((Date.now() - startTime) / 1000);
     timerDisplay.textContent = `Tiempo: ${timeElapsed}s`;
 
-    // Si es nivel 2 y se acaba tiempo
+     // Si es nivel 2 y se acaba tiempo
     if (level === 2 && Date.now() - startTime > maxTime) {
         alert("¡Tiempo agotado! Has perdido.");
         gameLost = true;
-        restartButton.style.display = "block"; // reiniciar
-        exitButton.style.display = "block";    // salir
+        restartButton.style.display = "block";
+        exitButton.style.display = "block";
     }
 
     if (!gameLost) {
@@ -157,56 +162,59 @@ function updateTimer() {
     }
 }
 
+// Avanzar al siguiente nivel
 function advanceToNextLevel() {
     matchedPairs = 0;
     flippedCards = [];
     matchedCards = [];
-    cards = shuffle(cardPairs);
+    cardPairs = shuffle([...cardColors, ...cardColors]);
     drawCards();
     nextLevelButton.style.display = "none";
     level++;
 
     if (level === 2) {
         startTime = Date.now(); // Reiniciar el temporizador para nivel 2
-        maxTime = 180000; // Establecer el tiempo máximo para el nivel 2 (3 minutos)
+        maxTime = 180000; // 3 minutos (nivel 2)
     } else if (level === 3) {
         moves = 0;
-        maxMoves = 50;
-        movesDisplay.style.display = "block"; // Mostrar movimientos en nivel 3
-        alert(`¡Bienvenido al Nivel ${level}! Tienes 50 movimientos.`);
+        movesDisplay.style.display = "block";
+        movesDisplay.textContent = "Movimientos: 0";
     }
+
+    updateLevelDisplay(); 
 }
 
-// Reiniciar el juego desde el nivel actual
-restartButton.addEventListener("click", () => {
+function updateLevelDisplay() {
+    levelDisplay.textContent = `Nivel: ${level}`;
+}
+
+function restartLevel() {
     gameLost = false;
-    startTime = Date.now(); // Reiniciar el tiempo
     flippedCards = [];
     matchedCards = [];
     matchedPairs = 0;
     moves = 0;
-    drawCards();
+    startTime = Date.now();
+    cardPairs = shuffle([...cardColors, ...cardColors]);
     restartButton.style.display = "none";
     exitButton.style.display = "none";
     movesDisplay.textContent = "Movimientos: 0";
-    updateTimer();
-});
+    drawCards();
+    requestAnimationFrame(updateTimer); 
+}
 
-// Salir del juego
-exitButton.addEventListener("click", () => {
-    alert("Has salido del juego.");
-    location.reload();
-});
+function startGame() {
+    cardPairs = shuffle([...cardColors, ...cardColors]);
+    cards = cardPairs;
+    drawCards();
+    requestAnimationFrame(updateTimer);
+}
 
-// botón de siguiente nivel
-nextLevelButton.addEventListener("click", () => {
-    if (gameLost) return; // No hacer nada si ya se perdió el juego
-    advanceToNextLevel();
-});
+startGame();
+nextLevelButton.addEventListener("click", advanceToNextLevel);
+restartButton.addEventListener("click", restartLevel);
+exitButton.addEventListener("click", () => window.location.reload());
 
-// Iniciar el juego
-drawCards();
-updateTimer();
 
 
 

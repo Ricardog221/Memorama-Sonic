@@ -3,51 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memorama Sonic</title>
+    <title>Memorama de Sonic</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-image: url('FondoSonic.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Comic Sans MS', sans-serif;
+            color: white;
+            text-shadow: 2px 2px 4px #000000;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        #gameContainer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        #gameCanvas {
+            border: 3px solid yellow;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        #levelDisplay {
+            font-size: 1.5rem;
+            margin-right: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 128, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 10px 2px yellow;
+        }
+        #controls {
+            margin-top: 20px;
             text-align: center;
         }
-        canvas {
-            display: block;
-            margin: 20px auto;
-            background-color: #ffffff;
-            border: 2px solid #000;
+        button {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            background-color: #0044cc;
+            border: none;
+            color: white;
+            border-radius: 10px;
+            margin: 5px;
+            cursor: pointer;
+            box-shadow: 0 0 10px 2px yellow;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0077ff;
         }
         #timer, #moves {
-            font-size: 24px;
+            font-size: 1.2rem;
             margin-top: 10px;
-        }
-        #nextLevelButton, #restartButton, #exitButton {
-            display: none;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-        }
-        #exitButton {
-            background-color: #FF0000;
+            background-color: rgba(0, 0, 128, 0.8);
+            padding: 5px 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px 2px yellow;
         }
     </style>
 </head>
 <body>
-    <h1>Memorama: Juego de Memoria de Sonic</h1>
-    <canvas id="gameCanvas" width="600" height="600"></canvas>
-    <div id="timer">Tiempo: 0s</div>
-    <div id="moves" style="display: none;">Movimientos: 0</div>
-    <button id="nextLevelButton">Siguiente Nivel</button>
-    <button id="restartButton">Reiniciar Nivel</button>
-    <button id="exitButton">Salir del Juego</button>
-    <audio id="clickSound" src="click.mp3" preload="auto"></audio>
-    <audio id="matchSound" src="match.mp3" preload="auto"></audio>
-    <audio id="backgroundMusic" src="music.mp3" preload="auto" loop></audio>
+    <h1>Memorama de Sonic</h1>
+    <div id="gameContainer">
+        <div id="levelDisplay">Nivel: 1</div>
+        <canvas id="gameCanvas" width="600" height="500"></canvas>
+    </div>
+    <div id="controls">
+        <button id="nextLevelButton" style="display: none;">Siguiente Nivel</button>
+        <button id="restartButton" style="display: none;">Reiniciar Nivel</button>
+        <button id="exitButton" style="display: none;">Salir del Juego</button>
+    </div>
+    <div>
+        <p id="timer">Tiempo: 0s</p>
+        <p id="moves" style="display: none;">Movimientos: 0</p>
+    </div>
+    <audio id="clickSound" src="Luego lo pongo"></audio>
+    <audio id="matchSound" src="Luego lo pongo"></audio>
+    <audio id="backgroundMusic" src="Luego lo pongo" loop></audio>
     <script src="memorama.js"></script>
 </body>
 </html>
+
+
 
 
