@@ -3,8 +3,9 @@ const ctx = canvas.getContext("2d");
 const timerDisplay = document.getElementById("timer");
 const movesDisplay = document.getElementById("moves");
 const clickSound = document.getElementById("clickSound");
-const matchSound = document.getElementById("matchSound");
-const backgroundMusic = document.getElementById("backgroundMusic");
+const matchSound = document.getElementById("matchSound");//sirve
+const backgroundMusic = document.getElementById("backgroundMusic");//no sirve aun;(
+const loseSound = document.getElementById("loseSound");//sirve
 const nextLevelButton = document.getElementById("nextLevelButton");
 const restartButton = document.getElementById("restartButton");
 const exitButton = document.getElementById("exitButton");
@@ -17,16 +18,13 @@ let cards = [];
 let flippedCards = [];
 let matchedCards = [];
 let matchedPairs = 0;
-const totalPairs = 15; 
+const totalPairs = 15;
 let level = 1;
-let maxTime = 180000; // 3 minutos 
-let moves = 0; // Movimientos realizados en el nivel 3
-let maxMoves = 70; // Límite de movimientos en el nivel 3
+let maxTime = 180000; // 3 minutos
+let moves = 0; // Movimientos en nivel 3
+let maxMoves = 70;//limite de movimientos de momento
 let gameLost = false;
-let flipDelay = 1000; // Tiempo de volteo de las cartas
-
-// música de fondo(aun no definida)
-backgroundMusic.play();
+let flipDelay = 1000; // Tiempo de volteo de cartas
 
 // Cartas(de momento)
 const cardColors = [
@@ -59,20 +57,19 @@ function drawCards() {
              // Si la carta está volteada o emparejada, muestra el color
             ctx.fillStyle = cards[i];
         } else {
-            // Muestra la parte trasera de la carta
+             // Muestra la parte trasera de la carta
             ctx.fillStyle = "#ccc";
         }
         ctx.fillRect(x, y, cardWidth, cardHeight);
         ctx.strokeRect(x, y, cardWidth, cardHeight);
     }
 }
-
 // Verificar si coinciden
 function checkMatch() {
     if (flippedCards.length === 2) {
         if (cards[flippedCards[0]] === cards[flippedCards[1]]) {
             matchSound.play();
-            matchedCards.push(...flippedCards); // Si coinciden las cartas se emparejan
+            matchedCards.push(...flippedCards);// Si coinciden las cartas se emparejan
             matchedPairs++;
             flippedCards = [];
 
@@ -89,15 +86,18 @@ function checkMatch() {
                         nextLevelButton.style.display = "none";
                         movesDisplay.textContent = "Movimientos: 0";
                         movesDisplay.style.display = "block";
-                        startTime = Date.now();  // Reiniciar tiempo
+                        startTime = Date.now();// Reiniciar tiempo
                         drawCards();
                     } else if (level === 3) {
                         alert("¡Ganaste el Nivel 3! Has completado el juego.");
+                        nextLevelButton.style.display = "none";
+                        restartButton.style.display = "block";
+                        exitButton.style.display = "block";
                     } else {
                         alert("¡Ganaste!");
                         nextLevelButton.style.display = "block";
                     }
-                    updateLevelDisplay(); 
+                    updateLevelDisplay();
                 }, 500);
             }
         } else {
@@ -110,7 +110,7 @@ function checkMatch() {
 }
 
 canvas.addEventListener("click", (e) => {
-    if (gameLost) return; 
+    if (gameLost) return;
 
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -124,10 +124,10 @@ canvas.addEventListener("click", (e) => {
     const cardY = Math.floor(y / cardHeight);
     const cardIndex = cardY * cols + cardX;
 
-     // Voltea la carta si no está ya emparejada o volteada
+   // Voltea la carta si no está ya emparejada o volteada
     if (!flippedCards.includes(cardIndex) && !matchedCards.includes(cardIndex) && flippedCards.length < 2) {
-        clickSound.play();
         flippedCards.push(cardIndex);
+        clickSound.play();
         drawCards();
         checkMatch();
 
@@ -135,7 +135,8 @@ canvas.addEventListener("click", (e) => {
             moves++;
             movesDisplay.textContent = `Movimientos: ${moves}`;
             if (moves >= maxMoves) {
-                alert("¡Has alcanzado el límite de movimientos! Has perdido.");
+                loseSound.play();
+                setTimeout(() => alert("¡Perdiste! Has excedido el número máximo de movimientos."), 500);
                 gameLost = true;
                 restartButton.style.display = "block";
                 exitButton.style.display = "block";
@@ -149,9 +150,10 @@ function updateTimer() {
     timeElapsed = Math.floor((Date.now() - startTime) / 1000);
     timerDisplay.textContent = `Tiempo: ${timeElapsed}s`;
 
-     // Si es nivel 2 y se acaba tiempo
+    // Si es nivel 2 y se acaba tiempo
     if (level === 2 && Date.now() - startTime > maxTime) {
-        alert("¡Tiempo agotado! Has perdido.");
+        loseSound.play();
+        setTimeout(() => alert("¡Tiempo agotado! Has perdido."), 500);
         gameLost = true;
         restartButton.style.display = "block";
         exitButton.style.display = "block";
@@ -181,7 +183,7 @@ function advanceToNextLevel() {
         movesDisplay.textContent = "Movimientos: 0";
     }
 
-    updateLevelDisplay(); 
+    updateLevelDisplay();
 }
 
 function updateLevelDisplay() {
@@ -194,13 +196,14 @@ function restartLevel() {
     matchedCards = [];
     matchedPairs = 0;
     moves = 0;
+    backgroundMusic.play();
     startTime = Date.now();
     cardPairs = shuffle([...cardColors, ...cardColors]);
     restartButton.style.display = "none";
     exitButton.style.display = "none";
     movesDisplay.textContent = "Movimientos: 0";
     drawCards();
-    requestAnimationFrame(updateTimer); 
+    requestAnimationFrame(updateTimer);
 }
 
 function startGame() {
@@ -214,6 +217,9 @@ startGame();
 nextLevelButton.addEventListener("click", advanceToNextLevel);
 restartButton.addEventListener("click", restartLevel);
 exitButton.addEventListener("click", () => window.location.reload());
+
+
+
 
 
 
