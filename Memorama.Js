@@ -4,15 +4,17 @@ const timerDisplay = document.getElementById("timer");
 const movesDisplay = document.getElementById("moves");
 const clickSound = document.getElementById("clickSound");
 const matchSound = document.getElementById("matchSound");//sirve
-const backgroundMusic = document.getElementById("backgroundMusic");//no sirve aun;(
+const backgroundMusic = document.getElementById("backgroundMusic");//Ya sirveee
 const loseSound = document.getElementById("loseSound");//sirve
 const nextLevelButton = document.getElementById("nextLevelButton");
 const restartButton = document.getElementById("restartButton");
 const exitButton = document.getElementById("exitButton");
 const levelDisplay = document.getElementById("levelDisplay");
+const victorySound = document.getElementById("victorySound");//sirve
 
+backgroundMusic.src = 'MusicaFondo.mp3';
+backgroundMusic.loop = true;
 
-// Inicializar variables
 let startTime = Date.now();
 let timeElapsed = 0;
 let cards = [];
@@ -22,11 +24,19 @@ let matchedPairs = 0;
 const totalPairs = 15;
 let level = 1;
 let maxTime = 180000; // 3 minutos
-let moves = 0; // Movimientos en nivel 3
-let maxMoves = 70;//limite de movimientos de momento
+let moves = 0; // Movimientos para niveles 3 y 4
+let maxMoves = 70;//Movimientos limite
 let gameLost = false;
-let flipDelay = 1000; // Tiempo de volteo de cartas
-let singleCardTimeout; // Variable para guardar el temporizador
+let flipDelay = 1000;
+let singleCardTimeout;
+
+canvas.addEventListener("click", () => {
+    if (backgroundMusic.paused) {
+        backgroundMusic.play().catch(error => {
+            console.error("Error al reproducir la música de fondo:", error);
+        });
+    }
+});
 
 // Cargar Cartas
 const cardImages = [
@@ -37,7 +47,7 @@ const cardImages = [
 
 // Parte trasera de las cartas
 const anilloImg = new Image();
-anilloImg.src = 'Anillo.gif'; 
+anilloImg.src = 'Anillo.gif';
 
 // Imágenes de las cartas
 let imagesLoaded = {};
@@ -69,22 +79,54 @@ function drawCards() {
         const x = (i % cols) * cardWidth;
         const y = Math.floor(i / cols) * cardHeight;
 
-       
         if (flippedCards.includes(i) || matchedCards.includes(i)) {
          // Si la carta está volteada o emparejada, muestra el color
             const img = imagesLoaded[cards[i]];
             ctx.drawImage(img, x, y, cardWidth, cardHeight);
         } else {
-            // Muestra la parte trasera de la carta
+             // Muestra la parte trasera de la carta
             ctx.drawImage(anilloImg, x, y, cardWidth, cardHeight);
         }
-        ctx.strokeRect(x, y, cardWidth, cardHeight); 
+        ctx.strokeRect(x, y, cardWidth, cardHeight);
     }
 }
 
 function animate() {
-    drawCards(); 
-    requestAnimationFrame(animate); 
+    drawCards();
+    requestAnimationFrame(animate);
+}
+
+function showVictoryMessage(message) {
+    const victoryMessage = document.createElement("div");
+    victoryMessage.className = "victory-message";
+    victoryMessage.textContent = message;
+    document.body.appendChild(victoryMessage);
+
+    victoryMessage.style.position = "fixed";
+    victoryMessage.style.top = "50%";
+    victoryMessage.style.left = "50%";
+    victoryMessage.style.transform = "translate(-50%, -50%)";
+    victoryMessage.style.backgroundColor = "rgba(0, 128, 0, 0.8)";
+    victoryMessage.style.color = "white";
+    victoryMessage.style.padding = "40px";
+    victoryMessage.style.fontSize = "32px";
+    victoryMessage.style.borderRadius = "15px";
+    victoryMessage.style.zIndex = "1000";
+
+    setTimeout(() => {
+        document.body.removeChild(victoryMessage);
+    }, 5000);
+}
+
+function stopMusic() {
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+}
+
+function resumeMusic() {
+    backgroundMusic.play().catch(error => {
+        console.error("Error al reanudar la música de fondo:", error);
+    });
 }
 
 // Verificar si coinciden
@@ -99,25 +141,14 @@ function checkMatch() {
             // Verificar si se encontraron todos los pares
             if (matchedPairs === totalPairs) {
                 setTimeout(() => {
-                    if (level === 2) {
-                        alert("¡Ganaste el Nivel 2! Avanzas al Nivel 3.");
-                        level = 3;
-                        moves = 0;
-                        matchedPairs = 0;
-                        matchedCards = [];
-                        cardPairs = shuffle([...cardImages, ...cardImages]);
-                        nextLevelButton.style.display = "none";
-                        movesDisplay.textContent = "Movimientos: 0";
-                        movesDisplay.style.display = "block";
-                        startTime = Date.now();// Reiniciar tiempo
-                        drawCards();
-                    } else if (level === 3) {
-                        alert("¡Ganaste el Nivel 3! Has completado el juego.");
-                        nextLevelButton.style.display = "none";
+                    victorySound.play();
+                    stopMusic();
+                    if (level === 4) {
+                        showVictoryMessage("¡Ganaste el Nivel 4! Has completado el juego.");
                         restartButton.style.display = "block";
                         exitButton.style.display = "block";
                     } else {
-                        alert("¡Ganaste!");
+                        showVictoryMessage(`¡Ganaste el Nivel ${level}! Avanza al siguiente nivel.`);
                         nextLevelButton.style.display = "block";
                     }
                     updateLevelDisplay();
@@ -127,11 +158,10 @@ function checkMatch() {
             setTimeout(() => {
                 flippedCards = [];
                 drawCards();
-            }, flipDelay); 
+            }, flipDelay);
         }
     }
 }
-
 
 canvas.addEventListener("click", (e) => {
     if (gameLost) return;
@@ -139,7 +169,6 @@ canvas.addEventListener("click", (e) => {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
     const cols = 6;
     const rows = 5;
     const cardWidth = canvas.width / cols;
@@ -148,12 +177,27 @@ canvas.addEventListener("click", (e) => {
     const cardY = Math.floor(y / cardHeight);
     const cardIndex = cardY * cols + cardX;
 
-    // Voltea la carta si no está ya emparejada o volteada
+  // Voltea la carta si no está ya emparejada o volteada
     if (!flippedCards.includes(cardIndex) && !matchedCards.includes(cardIndex) && flippedCards.length < 2) {
         flippedCards.push(cardIndex);
         clickSound.play();
         drawCards();
-        
+
+        // Contabilizar movimientos después de voltear una sola carta
+        if (level >= 3) {
+            moves++;
+            movesDisplay.textContent = `Movimientos: ${moves}`;
+            if (moves >= maxMoves) {
+                loseSound.play();
+                setTimeout(() => alert("¡Perdiste! Has excedido el número máximo de movimientos."), 500);
+                gameLost = true;
+                restartButton.style.display = "block";
+                exitButton.style.display = "block";
+                stopMusic();
+                return;
+            }
+        }
+
         if (flippedCards.length === 1) {
             singleCardTimeout = setTimeout(() => {
                 flippedCards = [];
@@ -164,18 +208,6 @@ canvas.addEventListener("click", (e) => {
         if (flippedCards.length === 2) {
             clearTimeout(singleCardTimeout); 
             checkMatch();
-
-            if (level === 3) {
-                moves++;
-                movesDisplay.textContent = `Movimientos: ${moves}`;
-                if (moves >= maxMoves) {
-                    loseSound.play();
-                    setTimeout(() => alert("¡Perdiste! Has excedido el número máximo de movimientos."), 500);
-                    gameLost = true;
-                    restartButton.style.display = "block";
-                    exitButton.style.display = "block";
-                }
-            }
         }
     }
 });
@@ -185,9 +217,10 @@ function updateTimer() {
     timeElapsed = Math.floor((Date.now() - startTime) / 1000);
     timerDisplay.textContent = `Tiempo: ${timeElapsed}s`;
 
-    // Si es nivel 2 y se acaba tiempo
-    if (level === 2 && Date.now() - startTime > maxTime) {
+    // Si es nivel 2 y 4 y se acaba tiempo
+    if ((level === 2 || level === 4) && Date.now() - startTime > maxTime) {
         loseSound.play();
+        stopMusic();
         setTimeout(() => alert("¡Tiempo agotado! Has perdido."), 500);
         gameLost = true;
         restartButton.style.display = "block";
@@ -204,42 +237,58 @@ function advanceToNextLevel() {
     matchedPairs = 0;
     flippedCards = [];
     matchedCards = [];
-    cardPairs = shuffle([...cardImages, ...cardImages]);
+    cardPairs = shuffle([...cardImages, ...cardImages]); // Barajar de nuevo las cartas
+    cards = cardPairs;
     drawCards();
-    nextLevelButton.style.display = "none";
+    nextLevelButton.style.display = "none"; 
     level++;
+    resumeMusic(); 
 
     if (level === 2) {
-        startTime = Date.now();// Reiniciar el temporizador para nivel 2
-        maxTime = 180000; // 3 minutos (nivel 2)
+        startTime = Date.now();
+        maxTime = 180000;
+        requestAnimationFrame(updateTimer);
     } else if (level === 3) {
         moves = 0;
         movesDisplay.style.display = "block";
         movesDisplay.textContent = "Movimientos: 0";
+        startTime = Date.now();
+        requestAnimationFrame(updateTimer);
+    } else if (level === 4) {
+        moves = 0;
+        movesDisplay.style.display = "block";
+        movesDisplay.textContent = "Movimientos: 0";
+        startTime = Date.now();
+        maxMoves = 50;  // Ajuste para nivel 4
+        requestAnimationFrame(updateTimer);
     }
 
     updateLevelDisplay();
 }
 
+
 function updateLevelDisplay() {
     levelDisplay.textContent = `Nivel: ${level}`;
 }
 
+// Reiniciar el juego o nivel actual
 function restartLevel() {
     gameLost = false;
     flippedCards = [];
     matchedCards = [];
     matchedPairs = 0;
     moves = 0;
-    backgroundMusic.play();
+    resumeMusic();
     startTime = Date.now();
-    cardPairs = shuffle([...cardImages, ...cardImages]);
+    cardPairs = shuffle([...cardImages, ...cardImages]); // Barajar las cartas de nuevo
+    cards = cardPairs;
     restartButton.style.display = "none";
     exitButton.style.display = "none";
     movesDisplay.textContent = "Movimientos: 0";
     drawCards();
     requestAnimationFrame(updateTimer);
 }
+
 
 function startGame() {
     cardPairs = shuffle([...cardImages, ...cardImages]);
@@ -249,11 +298,11 @@ function startGame() {
 }
 
 animate();
-
 startGame();
 nextLevelButton.addEventListener("click", advanceToNextLevel);
 restartButton.addEventListener("click", restartLevel);
 exitButton.addEventListener("click", () => window.location.reload());
+
 
 
 

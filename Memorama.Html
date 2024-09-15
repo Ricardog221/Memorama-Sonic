@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memorama de Sonic</title>
+    <title>Memorama</title>
     <style>
         body {
             background-image: url('FondoSonic.jpg');
@@ -19,30 +19,44 @@
             color: white;
             text-shadow: 2px 2px 4px #000000;
         }
+       
         h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: #FFFF00; /* Texto amarillo */
+        text-shadow: 
+            2px 2px 0 #0000FF, /* Sombra azul */
+            4px 4px 0 #0000FF, /* Sombra azul */
+            6px 6px 0 #0000FF; /* Sombra azul */
+        font-family: 'Arial Black', sans-serif; /* Fuente gruesa para dar sensación de fuerza */
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-align: center; /* Centrar el texto */
+    }
+
+
         #gameContainer {
             display: flex;
             justify-content: center;
             align-items: flex-start;
         }
+        #controls {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-right: 20px;
+        }
         #gameCanvas {
             border: 3px solid yellow;
             background-color: rgba(0, 0, 0, 0.5);
         }
-        #levelDisplay {
+        #levelDisplay, #timer, #moves {
             font-size: 1.5rem;
-            margin-right: 20px;
             padding: 10px;
             background-color: rgba(0, 0, 128, 0.8);
             border-radius: 10px;
             box-shadow: 0 0 10px 2px yellow;
-        }
-        #controls {
-            margin-top: 20px;
-            text-align: center;
+            margin-bottom: 10px;
         }
         button {
             font-size: 1.2rem;
@@ -59,38 +73,32 @@
         button:hover {
             background-color: #0077ff;
         }
-        #timer, #moves {
-            font-size: 1.2rem;
-            margin-top: 10px;
-            background-color: rgba(0, 0, 128, 0.8);
-            padding: 5px 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px 2px yellow;
-        }
     </style>
 </head>
 <body>
-    <h1>Memorama de Sonic</h1>
+    <h1>Memorama</h1>
     <div id="gameContainer">
-        <div id="levelDisplay">Nivel: 1</div>
+        <!-- Controles y texto a la izquierda -->
+        <div id="controls">
+            <div id="levelDisplay">Nivel: 1</div>
+            <div id="timer">Tiempo: 0s</div>
+            <div id="moves" style="display: none;">Movimientos: 0</div>
+            <button id="nextLevelButton" style="display: none;">Siguiente Nivel</button>
+            <button id="restartButton" style="display: none;">Reiniciar Nivel</button>
+            <button id="exitButton" style="display: none;">Salir del Juego</button>
+        </div>
+        <!-- Lienzo del juego a la derecha -->
         <canvas id="gameCanvas" width="600" height="500"></canvas>
     </div>
-    <div id="controls">
-        <button id="nextLevelButton" style="display: none;">Siguiente Nivel</button>
-        <button id="restartButton" style="display: none;">Reiniciar Nivel</button>
-        <button id="exitButton" style="display: none;">Salir del Juego</button>
-    </div>
-    <div>
-        <p id="timer">Tiempo: 0s</p>
-        <p id="moves" style="display: none;">Movimientos: 0</p>
-    </div>
     <audio id="clickSound" src="Click.mp3" preload="auto"></audio>
+    <audio id="victorySound" src="Victoria.mp3" preload="auto"></audio>
     <audio id="matchSound" src="ParEncontrado.mp3" preload="auto"></audio>
-    <audio id="backgroundMusic" src="MusicaFondo.mp3 no funciona aun porque el chrome no me deja" preload="auto" loop></audio>
+    <audio id="backgroundMusic" src="MusicaFondo.mp3" preload="auto" loop></audio>
     <audio id="loseSound" src="Perdiste.mp3" preload="auto"></audio>
     <script src="Memorama.js"></script>
 </body>
 </html>
+
 
 
 
