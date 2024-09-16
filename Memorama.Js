@@ -15,6 +15,24 @@ const helpButton = document.getElementById("helpButton");
 const instructionsPopup = document.getElementById("instructionsPopup");
 const instructionsText = document.getElementById("instructionsText");
 const closePopup = document.getElementById("closePopup");
+const menu = document.getElementById("menu");
+const gameContainer = document.getElementById("gameContainer");
+const startGameButton = document.getElementById("startGameButton");
+const exitGameButton = document.getElementById("exitGameButton");
+
+//Comenzar el juego
+startGameButton.addEventListener("click", () => {
+    menu.style.display = "none"; 
+    gameContainer.style.display = "flex"; 
+    startTime = Date.now();
+    requestAnimationFrame(updateTimer);
+});
+
+ //Regresar al menú
+ exitButton.addEventListener("click", () => {
+    gameContainer.style.display = "none"; 
+    menu.style.display = "flex"; 
+});
 
 backgroundMusic.src = 'MusicaFondo.mp3';
 backgroundMusic.loop = true;
@@ -29,11 +47,12 @@ const totalPairs = 15;
 let level = 1;
 let maxTime = 180000; // 3 minutos
 let moves = 0; // Movimientos para niveles 3 y 4
-let maxMoves = 70;//Movimientos limite
+let maxMoves = 150;//Movimientos limite
 let gameLost = false;
 let flipDelay = 1000;
 let singleCardTimeout;
 
+//instrucciones del juego
 helpButton.addEventListener("click", () => {
     let instructions = "";
     switch (level) {
@@ -290,7 +309,8 @@ function advanceToNextLevel() {
         movesDisplay.style.display = "block";
         movesDisplay.textContent = "Movimientos: 0";
         startTime = Date.now();
-        maxMoves = 0;  // Ajuste para nivel 4
+        maxTime = 180000;
+        maxMoves= 70;
         requestAnimationFrame(updateTimer);
     }
 

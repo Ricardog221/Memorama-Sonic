@@ -35,7 +35,7 @@
         }
 
         #gameContainer {
-            display: flex;
+            display: none;
             justify-content: center;
             align-items: flex-start;
             position: relative;
@@ -129,11 +129,36 @@
             border-radius: 10px;
             cursor: pointer;
         }
+        #menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #menu button {
+            font-size: 1.5rem;
+            padding: 15px 30px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 10px 2px yellow;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        #menu button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
-    
-    <h1>Memorama</h1>
+      <!-- Menú inicial -->
+      <div id="menu">
+        <h1>Memorama de Sonic</h1>
+        <button id="startGameButton">Comenzar el Juego</button>
+    </div>
     <div id="gameContainer">
         <div id="controls">
             <div id="levelDisplay">Nivel: 1</div>
