@@ -11,6 +11,10 @@ const restartButton = document.getElementById("restartButton");
 const exitButton = document.getElementById("exitButton");
 const levelDisplay = document.getElementById("levelDisplay");
 const victorySound = document.getElementById("victorySound");//sirve
+const helpButton = document.getElementById("helpButton");
+const instructionsPopup = document.getElementById("instructionsPopup");
+const instructionsText = document.getElementById("instructionsText");
+const closePopup = document.getElementById("closePopup");
 
 backgroundMusic.src = 'MusicaFondo.mp3';
 backgroundMusic.loop = true;
@@ -29,6 +33,33 @@ let maxMoves = 70;//Movimientos limite
 let gameLost = false;
 let flipDelay = 1000;
 let singleCardTimeout;
+
+helpButton.addEventListener("click", () => {
+    let instructions = "";
+    switch (level) {
+        case 1:
+            instructions = "Nivel 1: Encuentra los pares de cartas. No hay límite de tiempo.";
+            break;
+        case 2:
+            instructions = "Nivel 2: Encuentra los pares de cartas en menos de 3 minutos.";
+            break;
+        case 3:
+            instructions = "Nivel 3: Encuentra los pares de cartas. Tienes 70 movimientos máximo.";
+            break;
+        case 4:
+            instructions = "Nivel 4: Encuentra los pares en menos de 3 minutos y con 70 movimientos.";
+            break;
+        default:
+            instructions = "¡Buena suerte!";
+    }
+    instructionsText.textContent = instructions;
+    instructionsPopup.style.display = "block";
+});
+
+closePopup.addEventListener("click", () => {
+    instructionsPopup.style.display = "none";
+});
+
 
 canvas.addEventListener("click", () => {
     if (backgroundMusic.paused) {
@@ -259,7 +290,7 @@ function advanceToNextLevel() {
         movesDisplay.style.display = "block";
         movesDisplay.textContent = "Movimientos: 0";
         startTime = Date.now();
-        maxMoves = 50;  // Ajuste para nivel 4
+        maxMoves = 0;  // Ajuste para nivel 4
         requestAnimationFrame(updateTimer);
     }
 

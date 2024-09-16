@@ -19,37 +19,40 @@
             color: white;
             text-shadow: 2px 2px 4px #000000;
         }
-       
-        h1 {
-        font-size: 4rem;
-        margin-bottom: 20px;
-        color: #FFFF00; /* Texto amarillo */
-        text-shadow: 
-            2px 2px 0 #0000FF, /* Sombra azul */
-            4px 4px 0 #0000FF, /* Sombra azul */
-            6px 6px 0 #0000FF; /* Sombra azul */
-        font-family: 'Arial Black', sans-serif; /* Fuente gruesa para dar sensación de fuerza */
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        text-align: center; /* Centrar el texto */
-    }
 
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #FFFF00;
+            text-shadow: 
+                2px 2px 0 #0000FF, 
+                4px 4px 0 #0000FF, 
+                6px 6px 0 #0000FF;
+            font-family: 'Arial Black', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
 
         #gameContainer {
             display: flex;
             justify-content: center;
             align-items: flex-start;
+            position: relative;
         }
+        
         #controls {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             margin-right: 20px;
         }
+        
         #gameCanvas {
             border: 3px solid yellow;
             background-color: rgba(0, 0, 0, 0.5);
         }
+
         #levelDisplay, #timer, #moves {
             font-size: 1.5rem;
             padding: 10px;
@@ -58,6 +61,7 @@
             box-shadow: 0 0 10px 2px yellow;
             margin-bottom: 10px;
         }
+
         button {
             font-size: 1.2rem;
             padding: 10px 20px;
@@ -70,15 +74,67 @@
             box-shadow: 0 0 10px 2px yellow;
             transition: background-color 0.3s ease;
         }
+
         button:hover {
             background-color: #0077ff;
+        }
+
+        #helpButton {
+            position: absolute;
+            right: -70px;
+            top: 0;
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #00ff00;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px 2px yellow;
+        }
+
+        #helpButton:hover {
+            background-color: #FF4500;
+        }
+
+        #instructionsPopup {
+            display: none;
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            background-color: rgba(0, 0, 128, 0.8);
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px 2px yellow;
+            z-index: 1000;
+        }
+
+        #instructionsPopup p {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        #closePopup {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #FF0000;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+    
     <h1>Memorama</h1>
     <div id="gameContainer">
-        <!-- Controles y texto a la izquierda -->
         <div id="controls">
             <div id="levelDisplay">Nivel: 1</div>
             <div id="timer">Tiempo: 0s</div>
@@ -87,9 +143,15 @@
             <button id="restartButton" style="display: none;">Reiniciar Nivel</button>
             <button id="exitButton" style="display: none;">Salir del Juego</button>
         </div>
-        <!-- Lienzo del juego a la derecha -->
         <canvas id="gameCanvas" width="600" height="500"></canvas>
+        <button id="helpButton"> ? </button>
+      
+        <div id="instructionsPopup">
+            <p id="instructionsText"></p>
+            <button id="closePopup">Cerrar</button>
+        </div>
     </div>
+
     <audio id="clickSound" src="Click.mp3" preload="auto"></audio>
     <audio id="victorySound" src="Victoria.mp3" preload="auto"></audio>
     <audio id="matchSound" src="ParEncontrado.mp3" preload="auto"></audio>
