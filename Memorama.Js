@@ -47,7 +47,7 @@ const totalPairs = 15;
 let level = 1;
 let maxTime = 180000; // 3 minutos
 let moves = 0; // Movimientos para niveles 3 y 4
-let maxMoves = 150;//Movimientos limite
+let maxMoves = 70;//Movimientos limite
 let gameLost = false;
 let flipDelay = 1000;
 let singleCardTimeout;
