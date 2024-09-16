@@ -34,7 +34,7 @@ startGameButton.addEventListener("click", () => {
     menu.style.display = "flex"; 
 });
 
-backgroundMusic.src = 'MusicaFondo.mp3';
+backgroundMusic.src = 'sonidos/MusicaFondo.mp3';
 backgroundMusic.loop = true;
 
 let startTime = Date.now();
@@ -90,14 +90,14 @@ canvas.addEventListener("click", () => {
 
 // Cargar Cartas
 const cardImages = [
-    'CharmyBee.png', 'Rouge.png', 'Blaze.png', 'JetHawk.png', 'Sally.png',
-    'Sticks.png', 'Eggman.png', 'MetalSonic.png', 'Silver.png', 'AmyRose.png',
-    'SuperSonic.png', 'Tails.png', 'SonicBlue.png', 'Knuckles.png', 'Shadow.png'
+    'imagenes/CharmyBee.png', 'imagenes/Rouge.png', 'imagenes/Blaze.png', 'imagenes/JetHawk.png', 'imagenes/Sally.png',
+    'imagenes/Sticks.png', 'imagenes/Eggman.png', 'imagenes/MetalSonic.png', 'imagenes/Silver.png', 'imagenes/AmyRose.png',
+    'imagenes/SuperSonic.png', 'imagenes/Tails.png', 'imagenes/SonicBlue.png', 'imagenes/Knuckles.png', 'imagenes/Shadow.png'
 ];
 
 // Parte trasera de las cartas
 const anilloImg = new Image();
-anilloImg.src = 'Anillo.gif';
+anilloImg.src = 'imagenes/Anillo.gif';
 
 // Imágenes de las cartas
 let imagesLoaded = {};
